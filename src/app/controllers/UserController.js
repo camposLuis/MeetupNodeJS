@@ -32,7 +32,7 @@ class UserController {
     });
   }
 
-  /* async update(req, res) {
+  async update(req, res) {
     const schema = Yup.object().shape({
       name: Yup.string(),
       email: Yup.string().email(),
@@ -69,23 +69,14 @@ class UserController {
 
     await user.update(req.body);
 
-    const { id, name, avatar } = await User.findByPk(req.userId, {
-      include: [
-        {
-          model: File,
-          as: 'avatar',
-          attributes: ['id', 'path', 'url'],
-        },
-      ],
-    });
+    const { id, name } = await User.findByPk(req.userId);
 
     return res.json({
       id,
       name,
       email,
-      avatar,
     });
-  } */
+  }
 }
 
 export default new UserController();
