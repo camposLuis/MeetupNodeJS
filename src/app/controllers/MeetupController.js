@@ -1,5 +1,5 @@
 import * as Yup from 'yup';
-import { startOfHour, parseISO, isBefore } from 'date-fns';
+import { startOfHour, parseISO, isBefore, isAfter } from 'date-fns';
 import Meetup from '../models/Meetup';
 import User from '../models/User';
 import File from '../models/File';
@@ -105,6 +105,30 @@ class MeetupController {
     });
 
     return res.json(meetupFind);
+  }
+
+  async delete(req, res) {
+    const meetup = await Meetup.findByPk(req.params.id);
+
+    if (!meetup) {
+      return res.status(400).json({ error: 'Meetup not found' });
+    }
+
+    if (req.userId !== meetup.organizer_id) {
+      return res.status(401).json({ error: 'Not an organizer' });
+    }
+
+    const meetupDateStart = startOfHour(meetup.date);
+
+    if (isBefore(meetupDateStart, new Date())) {
+      return res
+        .status(400)
+        .json({ error: 'Deleting past meetup is not allowed' });
+    }
+
+    meetup.destroy();
+
+    return res.json();
   }
 }
 
