@@ -5,6 +5,28 @@ import User from '../models/User';
 import File from '../models/File';
 
 class MeetupController {
+  async index(req, res) {
+    const meetups = await Meetup.findAll({
+      where: { organizer_id: req.userId },
+      order: ['date'],
+      attributes: ['id', 'title', 'description', 'location', 'date'],
+      include: [
+        {
+          model: User,
+          as: 'organizer',
+          attributes: ['id', 'name'],
+        },
+        {
+          model: File,
+          as: 'banner',
+          attributes: ['id', 'path', 'url'],
+        },
+      ],
+    });
+
+    return res.json(meetups);
+  }
+
   async store(req, res) {
     const schema = Yup.object().shape({
       title: Yup.string().required(),
@@ -66,14 +88,8 @@ class MeetupController {
 
     await meetup.update(req.body);
 
-    const {
-      title,
-      description,
-      location,
-      date,
-      organizer,
-      banner,
-    } = await Meetup.findByPk(req.params.id, {
+    const meetupFind = await Meetup.findByPk(req.params.id, {
+      attributes: ['title', 'description', 'location', 'date'],
       include: [
         {
           model: User,
@@ -88,14 +104,7 @@ class MeetupController {
       ],
     });
 
-    return res.json({
-      title,
-      description,
-      location,
-      date,
-      organizer,
-      banner,
-    });
+    return res.json(meetupFind);
   }
 }
 
