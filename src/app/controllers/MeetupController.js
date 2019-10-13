@@ -9,7 +9,7 @@ class MeetupController {
     const meetups = await Meetup.findAll({
       where: { organizer_id: req.userId },
       order: ['date'],
-      attributes: ['id', 'title', 'description', 'location', 'date'],
+      attributes: ['past', 'id', 'title', 'description', 'location', 'date'],
       include: [
         {
           model: User,
@@ -89,7 +89,7 @@ class MeetupController {
     await meetup.update(req.body);
 
     const meetupFind = await Meetup.findByPk(req.params.id, {
-      attributes: ['title', 'description', 'location', 'date'],
+      attributes: ['past', 'id', 'title', 'description', 'location', 'date'],
       include: [
         {
           model: User,
@@ -118,9 +118,7 @@ class MeetupController {
       return res.status(401).json({ error: 'Not an organizer' });
     }
 
-    const meetupDateStart = startOfHour(meetup.date);
-
-    if (isBefore(meetupDateStart, new Date())) {
+    if (meetup.past === true) {
       return res
         .status(400)
         .json({ error: 'Deleting past meetup is not allowed' });
