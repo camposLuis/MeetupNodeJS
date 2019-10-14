@@ -30,6 +30,7 @@ routes.delete('/meetups/:id', MeetupController.delete);
 
 routes.get('/shedule', SheduleController.index);
 
+routes.get('/subscriptions', SubscriptionController.index);
 routes.post('/subscriptions/:meetupId', SubscriptionController.store);
 
 export default routes;

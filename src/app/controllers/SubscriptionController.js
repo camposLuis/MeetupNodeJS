@@ -1,7 +1,37 @@
 import Subscription from '../models/Subscription';
 import Meetup from '../models/Meetup';
+import User from '../models/User';
 
 class SubscriptionController {
+  async index(req, res) {
+    const subscriptions = await Subscription.findAll({
+      where: { participant_id: req.userId, canceled_at: null },
+      attributes: ['id', 'created_at'],
+      include: [
+        {
+          model: User,
+          as: 'participant',
+          attributes: ['name', 'email'],
+        },
+        {
+          model: Meetup,
+          as: 'meetup',
+          attributes: ['title', 'description', 'location', 'date'],
+          order: ['date'],
+          include: [
+            {
+              model: User,
+              as: 'organizer',
+              attributes: ['name', 'email'],
+            },
+          ],
+        },
+      ],
+    });
+
+    return res.json(subscriptions);
+  }
+
   async store(req, res) {
     const meetup = await Meetup.findByPk(req.params.meetupId);
 
