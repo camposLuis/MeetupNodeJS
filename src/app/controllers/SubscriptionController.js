@@ -119,6 +119,52 @@ class SubscriptionController {
 
     return res.json(subscription);
   }
+
+  async delete(req, res) {
+    const subscription = await Subscription.findByPk(req.params.id, {
+      include: [
+        {
+          model: User,
+          as: 'participant',
+          attributes: ['name', 'email'],
+        },
+        {
+          model: Meetup,
+          as: 'meetup',
+          attributes: ['title', 'description', 'location', 'date'],
+          include: [
+            {
+              model: User,
+              as: 'organizer',
+              attributes: ['name', 'email'],
+            },
+          ],
+        },
+      ],
+    });
+
+    if (!subscription) {
+      return res.status(400).json({ error: 'Subscription does not exist' });
+    }
+
+    if (subscription.canceled_at !== null) {
+      return res.status(401).json({
+        error: 'Subscription is already canceled',
+      });
+    }
+
+    if (subscription.meetup.past === true) {
+      return res
+        .status(401)
+        .json({ error: 'Unsubscribing from a past group is not allowed' });
+    }
+
+    subscription.canceled_at = new Date();
+
+    subscription.save();
+
+    return res.json(subscription);
+  }
 }
 
 export default new SubscriptionController();
