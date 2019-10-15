@@ -1,11 +1,9 @@
-import { format } from 'date-fns';
-import pt from 'date-fns/locale/pt';
-
 import Subscription from '../models/Subscription';
 import Meetup from '../models/Meetup';
 import User from '../models/User';
 
-import Mail from '../../lib/Mail';
+import SubscriptionMail from '../jobs/SubscriptionMail';
+import Queue from '../../lib/Queue';
 
 class SubscriptionController {
   async index(req, res) {
@@ -77,7 +75,7 @@ class SubscriptionController {
     }
 
     const checkMeetupEqualDate = await Subscription.findOne({
-      where: { participant_id: req.userId },
+      where: { participant_id: req.userId, canceled_at: null },
       attributes: ['id'],
       include: [
         {
@@ -101,20 +99,9 @@ class SubscriptionController {
       attributes: ['name', 'email'],
     });
 
-    await Mail.sendMail({
-      to: `${meetup.organizer.name} <${meetup.organizer.email}>`,
-      subject: 'Inscrição confirmada',
-      template: 'subscription',
-      context: {
-        organizer: meetup.organizer.name,
-        participant: registered.name,
-        email: registered.email,
-        title: meetup.title,
-        date: format(meetup.date, "'dia'  dd 'de' MMMM' às' H:mm'h'", {
-          locale: pt,
-        }),
-        location: meetup.location,
-      },
+    await Queue.add(SubscriptionMail.key, {
+      meetup,
+      registered,
     });
 
     return res.json(subscription);
