@@ -127,9 +127,9 @@ class MeetupController {
         .json({ error: 'Deleting past meetup is not allowed' });
     }
 
-    meetup.destroy();
+    await meetup.destroy();
 
-    file.destroy();
+    await file.destroy();
 
     const dir = resolve(__dirname, '..', '..', '..', 'tmp', 'uploads');
 
