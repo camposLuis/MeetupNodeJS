@@ -1,5 +1,7 @@
 import * as Yup from 'yup';
 import { startOfHour, parseISO, isBefore } from 'date-fns';
+import fs from 'fs';
+import { resolve } from 'path';
 import Meetup from '../models/Meetup';
 import User from '../models/User';
 import File from '../models/File';
@@ -109,6 +111,7 @@ class MeetupController {
 
   async delete(req, res) {
     const meetup = await Meetup.findByPk(req.params.id);
+    const file = await File.findByPk(meetup.banner_id);
 
     if (!meetup) {
       return res.status(400).json({ error: 'Meetup not found' });
@@ -125,6 +128,16 @@ class MeetupController {
     }
 
     meetup.destroy();
+
+    file.destroy();
+
+    const dir = resolve(__dirname, '..', '..', '..', 'tmp', 'uploads');
+
+    // eslint-disable-next-line consistent-return
+    fs.unlink(`${dir}/${file.path}`, err => {
+      // eslint-disable-next-line no-console
+      if (err) return console.log('File not deleted');
+    });
 
     return res.json();
   }

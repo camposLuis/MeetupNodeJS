@@ -9,6 +9,7 @@ import MeetupController from './app/controllers/MeetupController';
 import SheduleController from './app/controllers/SheduleController';
 import SubscriptionController from './app/controllers/SubscriptionController';
 import DetailMeetupController from './app/controllers/DetailMeetupController';
+import SubscriptionMeetupController from './app/controllers/SubscriptionMeetupController';
 
 import authMiddleware from './app/middlewares/auth';
 
@@ -25,10 +26,11 @@ routes.put('/users', UserController.update);
 routes.post('/files', upload.single('file'), FileController.store);
 
 routes.get('/meetups', MeetupController.index);
-routes.get('/meetups/:id', DetailMeetupController.index);
+routes.get('/meetups/:id/detail', DetailMeetupController.index);
+routes.get('/meetups/:id/subscriptions', SubscriptionMeetupController.indexSu);
 routes.post('/meetups', MeetupController.store);
 routes.put('/meetups/:id', MeetupController.update);
-routes.delete('/meetups/:id', MeetupController.delete);
+routes.delete('/meetups/:id/canceled', MeetupController.delete);
 
 routes.get('/shedule', SheduleController.index);
 

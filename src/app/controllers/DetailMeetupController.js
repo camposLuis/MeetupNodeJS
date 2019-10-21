@@ -4,9 +4,8 @@ import File from '../models/File';
 
 class DetailMeetupController {
   async index(req, res) {
-    const meetup = await Meetup.findByPk(req.params.id, {
-      where: { organizer_id: req.userId },
-      order: ['date'],
+    const meetup = await Meetup.findOne({
+      where: { id: req.params.id },
       attributes: ['past', 'id', 'title', 'description', 'location', 'date'],
       include: [
         {
@@ -21,6 +20,14 @@ class DetailMeetupController {
         },
       ],
     });
+
+    if (!meetup) {
+      return res.status(400).json({ error: 'Meetup not found' });
+    }
+
+    if (req.userId !== meetup.organizer.id) {
+      return res.status(401).json({ error: 'Not an organizer' });
+    }
 
     return res.json(meetup);
   }
