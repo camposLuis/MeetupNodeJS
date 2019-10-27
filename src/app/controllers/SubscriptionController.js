@@ -1,6 +1,7 @@
 import Subscription from '../models/Subscription';
 import Meetup from '../models/Meetup';
 import User from '../models/User';
+import File from '../models/File';
 
 import SubscriptionMail from '../jobs/SubscriptionMail';
 import Queue from '../../lib/Queue';
@@ -19,13 +20,18 @@ class SubscriptionController {
         {
           model: Meetup,
           as: 'meetup',
-          attributes: ['title', 'description', 'location', 'date'],
+          attributes: ['id', 'title', 'description', 'location', 'date'],
           order: ['date'],
           include: [
             {
               model: User,
               as: 'organizer',
               attributes: ['name', 'email'],
+            },
+            {
+              model: File,
+              as: 'banner',
+              attributes: ['id', 'path', 'url'],
             },
           ],
         },
@@ -109,6 +115,7 @@ class SubscriptionController {
 
   async delete(req, res) {
     const subscription = await Subscription.findByPk(req.params.id, {
+      where: { participant_id: req.userId },
       include: [
         {
           model: User,

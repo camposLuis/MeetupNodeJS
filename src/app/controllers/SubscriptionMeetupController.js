@@ -6,7 +6,7 @@ import File from '../models/File';
 class SubscriptionMeetupController {
   async index(req, res) {
     const subscriptions = await Subscription.findAll({
-      attributes: ['id', 'participant_id', 'meetup_id'],
+      attributes: ['id', 'participant_id', 'meetup_id', 'canceled_at'],
       include: [
         {
           model: Meetup,
