@@ -8,19 +8,29 @@ import File from '../models/File';
 class SheduleController {
   async index(req, res) {
     const { date, page } = req.query;
+    const perPage = 4;
 
     const parsedDate = parseISO(date);
 
-    const meetups = await Meetup.findAll({
+    const meetupsFull = await Meetup.findAll({
       where: {
         date: {
           [Op.between]: [startOfDay(parsedDate), endOfDay(parsedDate)],
         },
       },
+    });
+
+    const meetups = await Meetup.findAll({
+      where: {
+        date: {
+          [Op.between]: [startOfDay(parsedDate), endOfDay(parsedDate)],
+          [Op.gt]: new Date(),
+        },
+      },
       order: ['date'],
       attributes: ['id', 'title', 'description', 'location', 'date'],
-      limit: 10,
-      offset: (page - 1) * 10,
+      limit: perPage,
+      offset: (page - 1) * perPage,
       include: [
         {
           model: User,
@@ -35,7 +45,10 @@ class SheduleController {
       ],
     });
 
-    return res.json(meetups);
+    return res.json({
+      schedules: meetups,
+      pages: Math.ceil(meetupsFull.length / perPage),
+    });
   }
 }
 
