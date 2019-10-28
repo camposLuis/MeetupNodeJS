@@ -1,4 +1,4 @@
-# Desafio Final bootcampo Rocktseat - Node JS
+# Desafio Final bootcamp Rocktseat - Node JS
 
 # Configurando o projeto para rodar na máquina local
 
