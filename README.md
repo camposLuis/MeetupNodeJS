@@ -1,6 +1,8 @@
-# Desafio Final bootcamp Rocktseat - Node JS | Aluno: Luís Campos
+# Desafio Final bootcamp Rocktseat - Node JS
 
-# Configurando o projeto para rodar na máquina local
+<b>Aluno:</b> Luís Campos
+
+<b>Configurando o projeto para rodar na máquina local</b>
 
 <b>1.</b> Baixe o projeto ou clone o repositório
 
