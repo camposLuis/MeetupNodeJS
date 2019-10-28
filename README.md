@@ -1,8 +1,8 @@
-# Desafio Final bootcamp Rocktseat - Node JS
+# Desafio Final bootcamp Rocktseat - Node JS | Aluno: Luís Campos
 
 # Configurando o projeto para rodar na máquina local
 
-<b>1.</b> Baixe o projeto ou clone o repositorio
+<b>1.</b> Baixe o projeto ou clone o repositório
 
 - execute o seguinte comando para instalar as dependências do projeto:
   <b>yarn / npm install</b>
