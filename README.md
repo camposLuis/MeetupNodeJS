@@ -5,7 +5,7 @@
 <b>1.</b> Baixe o projeto ou clone o repositorio
 
 - execute o seguinte comando para instalar as dependências do projeto:
-  <b>yarn / npm installes</b>
+  <b>yarn / npm install</b>
 
 <b>2.</b> Instale o banco <b>Postgres</b> via docker ou localmente em sua máquina, assim que instalado crie uma base de dados para a aplicação.
 
